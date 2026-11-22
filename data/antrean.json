@@ -10,5 +10,43 @@
     "judul": "Contoh: Quote Soekarno",
     "jenis": "Reels",
     "status": "menunggu"
+  },
+  {
+    "id": 3,
+    "judul": "Kata-kata Seneca yang layak direnungkan",
+    "jenis": "Carousel",
+    "status": "disetujui",
+    "quote_id": 1,
+    "caption": "“Kita lebih sering menderita dalam imajinasi daripada dalam kenyataan”\n— Seneca\nSumber: Surat kepada Lucilius, no. 13\n\nApa yang kalimat ini ubah dari cara pandang Anda hari ini?\nSimpan postingan ini dan bagikan ke orang yang perlu membacanya.",
+    "hashtag": "#seneca #quotes #kutipan #filsafat #motivasi #inspirasi #windcreat",
+    "slides": [
+      "/static/hasil/q1-20261122-115052/slide1.png",
+      "/static/hasil/q1-20261122-115052/slide2.png",
+      "/static/hasil/q1-20261122-115052/slide3.png"
+    ]
+  },
+  {
+    "id": 4,
+    "judul": "Renungan hari ini dari Seneca",
+    "jenis": "Carousel",
+    "status": "disetujui",
+    "quote_id": 1,
+    "caption": "“Kita lebih sering menderita dalam imajinasi daripada dalam kenyataan”\n— Seneca\nSumber: Surat kepada Lucilius, no. 13\n\nBagian mana dari kalimat ini yang paling mengena untuk Anda?\nSimpan postingan ini dan bagikan ke orang yang perlu membacanya.",
+    "hashtag": "#seneca #quotes #kutipan #filsafat #motivasi #inspirasi #windcreat",
+    "slides": [
+      "/static/hasil/q1-20261122-115111/slide1.png",
+      "/static/hasil/q1-20261122-115111/slide2.png",
+      "/static/hasil/q1-20261122-115111/slide3.png"
+    ]
+  },
+  {
+    "judul": "Renungan hari ini dari Seneca",
+    "jenis": "Reels",
+    "quote_id": 1,
+    "caption": "“Kita lebih sering menderita dalam imajinasi daripada dalam kenyataan”\n— Seneca\nSumber: Surat kepada Lucilius, no. 13\n\nApa yang kalimat ini ubah dari cara pandang Anda hari ini?\nSimpan postingan ini dan bagikan ke orang yang perlu membacanya.",
+    "hashtag": "#seneca #quotes #kutipan #filsafat #motivasi #inspirasi #windcreat",
+    "video": "/static/hasil/q1-20261122-115925/reels.mp4",
+    "id": 5,
+    "status": "menunggu"
   }
 ]

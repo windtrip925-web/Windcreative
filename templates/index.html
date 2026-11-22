@@ -22,6 +22,12 @@
   </main>
 
   <script>
+    function esc(s) {
+      const d = document.createElement("div");
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
     async function muatKaryawan() {
       const data = await (await fetch("/api/karyawan")).json();
       const wadah = document.getElementById("karyawan");
@@ -41,15 +47,40 @@
       const data = await (await fetch("/api/antrean")).json();
       const wadah = document.getElementById("antrean");
       wadah.innerHTML = "";
-      data.forEach(t => {
+      data.slice().reverse().forEach(t => {
         const baris = document.createElement("div");
-        baris.className = "baris";
+        baris.className = "baris kolom";
         const tombol = t.status === "menunggu"
           ? `<button onclick="aksi(${t.id}, 'setujui')">✅ Setujui</button>
              <button class="tolak" onclick="aksi(${t.id}, 'tolak')">❌ Tolak</button>`
           : "";
-        baris.innerHTML = `<div><b>${t.judul}</b><small>${t.jenis}</small></div>
-          <div><span class="status">${t.status}</span> ${tombol}</div>`;
+        baris.innerHTML = `<div><b>${esc(t.judul)}</b><small>${esc(t.jenis)}</small></div>
+          <div><span class="status">${esc(t.status)}</span> ${tombol}</div>`;
+
+        if (t.slides && t.slides.length) {
+          const galeri = document.createElement("div");
+          galeri.className = "galeri";
+          t.slides.forEach(s => {
+            const a = document.createElement("a");
+            a.href = s;
+            a.target = "_blank";
+            a.innerHTML = '<img src="' + s + '">';
+            galeri.appendChild(a);
+          });
+          baris.appendChild(galeri);
+        }
+        if (t.video) {
+          const v = document.createElement("video");
+          v.src = t.video;
+          v.controls = true;
+          baris.appendChild(v);
+        }
+        if (t.caption) {
+          const cap = document.createElement("pre");
+          cap.className = "caption";
+          cap.textContent = t.caption + "\n\n" + (t.hashtag || "");
+          baris.appendChild(cap);
+        }
         wadah.appendChild(baris);
       });
     }

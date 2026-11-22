@@ -1,8 +1,12 @@
 import json
 import os
+import time
 from flask import Flask, render_template, jsonify, request
 
 import database
+import desainer
+import editor
+import penulis
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(BASE, "data")
@@ -20,6 +24,24 @@ def simpan(nama, isi):
         json.dump(isi, f, ensure_ascii=False, indent=2)
 
 
+def cari_quote(quote_id):
+    return next((q for q in database.daftar_quote() if q["id"] == quote_id), None)
+
+
+def folder_hasil(quote_id):
+    nama = "q%d-%s" % (quote_id, time.strftime("%Y%m%d-%H%M%S"))
+    return nama, os.path.join(BASE, "static", "hasil", nama)
+
+
+def tambah_antrean(item):
+    antrean = baca("antrean.json")
+    item["id"] = max([t["id"] for t in antrean], default=0) + 1
+    item["status"] = "menunggu"
+    antrean.append(item)
+    simpan("antrean.json", antrean)
+    return item
+
+
 # ---------- Halaman ----------
 @app.route("/")
 def beranda():
@@ -29,6 +51,11 @@ def beranda():
 @app.route("/perekap")
 def halaman_perekap():
     return render_template("perekap.html")
+
+
+@app.route("/studio")
+def halaman_studio():
+    return render_template("studio.html")
 
 
 # ---------- Kantor: karyawan & antrean ----------
@@ -90,6 +117,64 @@ def api_hapus(id):
     return jsonify({"pesan": "Quote dihapus"})
 
 
+# ---------- Studio: Penulis, Desainer, Editor Video ----------
+@app.route("/api/studio/layak")
+def api_studio_layak():
+    return jsonify([q for q in database.daftar_quote() if q["tayang"]])
+
+
+@app.route("/api/studio/buat", methods=["POST"])
+def api_studio_buat():
+    quote = cari_quote((request.get_json() or {}).get("quote_id"))
+    if quote is None:
+        return jsonify({"pesan": "Quote tidak ditemukan"}), 404
+    if not quote["tayang"]:
+        return jsonify({"pesan": "Ditolak: quote belum terverifikasi atau sumber kosong"}), 400
+
+    konten = penulis.buat_konten(quote)
+    nama, folder = folder_hasil(quote["id"])
+    os.makedirs(folder, exist_ok=True)
+    berkas = desainer.buat_carousel(quote, folder)
+    item = tambah_antrean({
+        "judul": konten["judul"],
+        "jenis": "Carousel",
+        "quote_id": quote["id"],
+        "caption": konten["caption"],
+        "hashtag": konten["hashtag"],
+        "slides": ["/static/hasil/%s/%s" % (nama, b) for b in berkas],
+    })
+    return jsonify({"pesan": "Carousel dibuat dan masuk antrean persetujuan", "item": item})
+
+
+@app.route("/api/studio/video", methods=["POST"])
+def api_studio_video():
+    data = request.get_json() or {}
+    quote = cari_quote(data.get("quote_id"))
+    if quote is None:
+        return jsonify({"pesan": "Quote tidak ditemukan"}), 404
+    if not quote["tayang"]:
+        return jsonify({"pesan": "Ditolak: quote belum terverifikasi atau sumber kosong"}), 400
+
+    konten = penulis.buat_konten(quote)
+    nama, folder = folder_hasil(quote["id"])
+    try:
+        berkas, catatan = editor.buat_reels(quote, folder, bool(data.get("voice")))
+    except RuntimeError as e:
+        return jsonify({"pesan": "Gagal membuat video: %s" % e}), 500
+
+    item = tambah_antrean({
+        "judul": konten["judul"],
+        "jenis": "Reels",
+        "quote_id": quote["id"],
+        "caption": konten["caption"],
+        "hashtag": konten["hashtag"],
+        "video": "/static/hasil/%s/%s" % (nama, berkas),
+    })
+    pesan = "Video dibuat dan masuk antrean persetujuan"
+    if catatan:
+        pesan += " (" + " ".join(catatan) + ")"
+    return jsonify({"pesan": pesan, "item": item})
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
-    

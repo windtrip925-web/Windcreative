@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Windcreat - Studio</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>✍️🎨🎬 Studio</h1>
+    <p><a href="/">← Kembali ke Kantor</a></p>
+  </header>
+
+  <main>
+    <section>
+      <h2>Buat Konten</h2>
+      <div class="form">
+        <select id="pilih"></select>
+        <button onclick="buatCarousel()">🎨 Buat Caption + Carousel</button>
+        <label class="centang">
+          <input type="checkbox" id="voice"> Tambahkan voice over (suara narasi)
+        </label>
+        <button onclick="buatVideo()">🎬 Buat Video Reels</button>
+        <p id="pesan" class="pesan"></p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Hasil</h2>
+      <div id="hasil"></div>
+    </section>
+  </main>
+
+  <script>
+    function pesan(teks) {
+      document.getElementById("pesan").textContent = teks;
+    }
+
+    async function muatQuote() {
+      const data = await (await fetch("/api/studio/layak")).json();
+      const pilih = document.getElementById("pilih");
+      pilih.innerHTML = "";
+      if (data.length === 0) {
+        pesan("Belum ada quote terverifikasi. Verifikasi dulu di halaman Perekap.");
+        return;
+      }
+      data.forEach(q => {
+        const o = document.createElement("option");
+        o.value = q.id;
+        o.textContent = q.tokoh + ": " + q.teks.slice(0, 60);
+        pilih.appendChild(o);
+      });
+    }
+
+    function tampil(item) {
+      const wadah = document.getElementById("hasil");
+      wadah.innerHTML = "";
+      const judul = document.createElement("h3");
+      judul.textContent = item.judul;
+      wadah.appendChild(judul);
+
+      if (item.slides) {
+        const galeri = document.createElement("div");
+        galeri.className = "galeri";
+        item.slides.forEach(s => {
+          const a = document.createElement("a");
+          a.href = s;
+          a.target = "_blank";
+          a.innerHTML = '<img src="' + s + '">';
+          galeri.appendChild(a);
+        });
+        wadah.appendChild(galeri);
+      }
+      if (item.video) {
+        const v = document.createElement("video");
+        v.src = item.video;
+        v.controls = true;
+        wadah.appendChild(v);
+      }
+      const cap = document.createElement("pre");
+      cap.className = "caption";
+      cap.textContent = item.caption + "\n\n" + item.hashtag;
+      wadah.appendChild(cap);
+    }
+
+    async function kirim(alamat, badan, tunggu) {
+      const pilih = document.getElementById("pilih");
+      if (!pilih.value) { pesan("Pilih quote dulu."); return; }
+      pesan(tunggu);
+      try {
+        const jawab = await fetch(alamat, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(badan(Number(pilih.value)))
+        });
+        const hasil = await jawab.json();
+        pesan(hasil.pesan);
+        if (jawab.ok) tampil(hasil.item);
+      } catch (e) {
+        pesan("Gagal terhubung ke server. Cek terminal.");
+      }
+    }
+
+    function buatCarousel() {
+      kirim("/api/studio/buat", id => ({quote_id: id}), "Sedang membuat carousel...");
+    }
+
+    function buatVideo() {
+      kirim("/api/studio/video",
+        id => ({quote_id: id, voice: document.getElementById("voice").checked}),
+        "Sedang membuat video, mohon tunggu 20-60 detik...");
+    }
+
+    muatQuote();
+  </script>
+</body>
+</html>

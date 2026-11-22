@@ -24,3 +24,12 @@ textarea { min-height: 80px; }
 .hijau { background: #166534; }
 .merah { background: #7f1d1d; }
 button.abu { background: #475569; }
+select { background: #1e293b; color: #e2e8f0; border: 1px solid #334155;
+         border-radius: 8px; padding: 10px; font-size: 16px; }
+.galeri { display: flex; gap: 8px; overflow-x: auto; width: 100%; padding: 8px 0; }
+.galeri img { height: 220px; border-radius: 8px; border: 1px solid #334155; }
+.caption { background: #0f172a; border-radius: 8px; padding: 10px; width: 100%;
+           white-space: pre-wrap; font-family: inherit; color: #cbd5e1; margin: 0; }
+           video { width: 100%; max-width: 320px; border-radius: 12px; border: 1px solid #334155; }
+.centang { display: flex; align-items: center; gap: 8px; color: #cbd5e1; }
+.centang input { width: 20px; height: 20px; }
