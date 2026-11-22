@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "judul": "Contoh: Quote Marcus Aurelius",
+    "jenis": "Carousel",
+    "status": "menunggu"
+  },
+  {
+    "id": 2,
+    "judul": "Contoh: Quote Soekarno",
+    "jenis": "Reels",
+    "status": "menunggu"
+  }
+]

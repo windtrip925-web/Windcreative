@@ -1,0 +1,15 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, sans-serif; background: #0f172a; color: #e2e8f0; }
+header { padding: 20px; background: #1e293b; text-align: center; }
+header h1 { margin: 0; }
+header p { margin: 4px 0 0; color: #94a3b8; }
+main { padding: 16px; max-width: 900px; margin: auto; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.kartu { background: #1e293b; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 6px; }
+.ikon { font-size: 28px; }
+small { color: #94a3b8; display: block; }
+.status { background: #334155; padding: 2px 8px; border-radius: 99px; font-size: 12px; }
+.baris { background: #1e293b; border-radius: 12px; padding: 12px; margin-bottom: 8px;
+         display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+button { background: #16a34a; color: white; border: 0; padding: 8px 12px; border-radius: 8px; font-size: 14px; }
+button.tolak { background: #dc2626; }

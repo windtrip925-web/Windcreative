@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Windcreat - Perekap</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>📚 Perekap Quotes</h1>
+    <p><a href="/">← Kembali ke Kantor</a></p>
+  </header>
+
+  <main>
+    <section>
+      <h2>Tambah Quote</h2>
+      <div class="form">
+        <textarea id="teks" placeholder="Isi quote"></textarea>
+        <input id="tokoh" placeholder="Nama tokoh (contoh: Seneca)">
+        <input id="sumber" placeholder="Sumber asli: judul buku + bab/halaman, atau pidato + tanggal">
+        <button onclick="tambah()">Simpan Quote</button>
+        <p id="pesan" class="pesan"></p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Daftar Quotes</h2>
+      <div id="daftar"></div>
+    </section>
+  </main>
+
+  <script>
+    function esc(s) {
+      const d = document.createElement("div");
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    function tampilPesan(teks) {
+      document.getElementById("pesan").textContent = teks;
+    }
+
+    async function muat() {
+      const data = await (await fetch("/api/quotes")).json();
+      const wadah = document.getElementById("daftar");
+      wadah.innerHTML = "";
+      if (data.length === 0) {
+        wadah.innerHTML = "<p class='pesan'>Belum ada quote.</p>";
+      }
+      data.forEach(q => {
+        const kartu = document.createElement("div");
+        kartu.className = "baris kolom";
+        const tombolVerif = q.status === "terverifikasi"
+          ? `<button class="abu" onclick="aksi(${q.id}, 'cabut')">Cabut verifikasi</button>`
+          : `<button onclick="aksi(${q.id}, 'verifikasi')">✅ Verifikasi</button>`;
+        kartu.innerHTML = `
+          <div>
+            <b>“${esc(q.teks)}”</b>
+            <small>— ${esc(q.tokoh)}</small>
+            <small>Sumber: ${q.sumber ? esc(q.sumber) : "<i>belum diisi</i>"}</small>
+          </div>
+          <div>
+            <span class="status ${q.tayang ? "hijau" : "merah"}">
+              ${q.tayang ? "✅ Boleh tayang" : "⛔ Belum boleh tayang"}
+            </span>
+            ${tombolVerif}
+            <button class="tolak" onclick="aksi(${q.id}, 'hapus')">🗑️ Hapus</button>
+          </div>`;
+        wadah.appendChild(kartu);
+      });
+    }
+
+    async function tambah() {
+      const teks = document.getElementById("teks").value;
+      const tokoh = document.getElementById("tokoh").value;
+      const sumber = document.getElementById("sumber").value;
+      const jawab = await fetch("/api/quotes", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({teks, tokoh, sumber})
+      });
+      const hasil = await jawab.json();
+      tampilPesan(hasil.pesan);
+      if (jawab.ok) {
+        document.getElementById("teks").value = "";
+        document.getElementById("tokoh").value = "";
+        document.getElementById("sumber").value = "";
+        muat();
+      }
+    }
+
+    async function aksi(id, jenis) {
+      if (jenis === "hapus" && !confirm("Hapus quote ini?")) return;
+      const jawab = await fetch(`/api/quotes/${id}/${jenis}`, {method: "POST"});
+      const hasil = await jawab.json();
+      tampilPesan(hasil.pesan || "");
+      muat();
+    }
+
+    muat();
+  </script>
+</body>
+</html>
