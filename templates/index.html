@@ -27,8 +27,9 @@
       const wadah = document.getElementById("karyawan");
       wadah.innerHTML = "";
       data.forEach(k => {
-        const kartu = document.createElement("div");
+        const kartu = document.createElement(k.link ? "a" : "div");
         kartu.className = "kartu";
+        if (k.link) kartu.href = k.link;
         kartu.innerHTML = `<div class="ikon">${k.ikon}</div>
           <b>${k.nama}</b><small>${k.tugas}</small>
           <span class="status">${k.status}</span>`;

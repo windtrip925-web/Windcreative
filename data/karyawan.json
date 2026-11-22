@@ -1,6 +1,6 @@
 [
   {"nama": "Penulis", "ikon": "✍️", "tugas": "Memilih quote, caption, hashtag, judul", "status": "belum dibangun"},
-  {"nama": "Perekap", "ikon": "📚", "tugas": "Menyimpan quote + sumber + verifikasi", "status": "belum dibangun"},
+  {"nama": "Perekap", "ikon": "📚", "tugas": "Menyimpan quote + sumber + verifikasi", "status": "aktif", "link": "/perekap"},
   {"nama": "Desainer", "ikon": "🎨", "tugas": "Carousel dan poster quote", "status": "belum dibangun"},
   {"nama": "Editor Video", "ikon": "🎬", "tugas": "Reels 9:16 dengan teks animasi", "status": "belum dibangun"},
   {"nama": "Publisher", "ikon": "🚀", "tugas": "Jadwal dan upload ke FB/IG", "status": "belum dibangun"}
